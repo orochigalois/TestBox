@@ -106,6 +106,7 @@ void  BSP_LED_Toggle (uint8_t port, uint32_t mask)
 ********************************************************************************/
 void BSP_KEY_Init(void)
 {
+	
    GPIO_Init();
 	/* LED1   P2.21 CORE and SDK Both*/
 	/* LED2   P1.13 SDK Only */      
@@ -160,5 +161,5 @@ void BSP_KEY_Init(void)
     vCAN_Init();
 	vUART_Init();
 	EMC_NAND_Init();
-	EMC_NAND_EraseSingleBlock(0);
+	
 }

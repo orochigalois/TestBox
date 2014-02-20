@@ -21,8 +21,12 @@
 #define RXWriteDataByIDType 0x6E
 #define RXRoutineType 			0x71
 
+
 void vCAN_Init(void);
 
+void SeedToKeyAlex(void);
+
+void get_one_instruction(void);
 void CAN_IRQHandler(void);
 
 void SendService_CAN(uint8_t *TXDataBuffer);

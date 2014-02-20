@@ -58,13 +58,13 @@ uint16_t TXReadDataByIDBufferID[22] =  {SERIALNUMBER_ID,
 uint8_t AlexRequest(uint8_t	ReadData_Identifer_ID)
 {
 
-	TXReadDataByIDBuffer[0] = 0x03;
-	TXReadDataByIDBuffer[1] = 0x22;
-	TXReadDataByIDBuffer[2] = 0xF1;
-	TXReadDataByIDBuffer[3] = 0x94;
+	TXReadDataByIDBuffer[0] = 0x02;
+	TXReadDataByIDBuffer[1] = 0x10;
+	TXReadDataByIDBuffer[2] = 0x02;
+
+	SendService_CAN(TXReadDataByIDBuffer);
 
 	
-	SendService_CAN(TXReadDataByIDBuffer);
 	return 0;
 }
 

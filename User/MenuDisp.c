@@ -31,18 +31,19 @@
 #include "debug_frmwrk.h"
 
 /* alex   2014/1/23 alex */
-uint8_t readBuff[2048];  
-uint16_t readIndex=0;
 
- 
-	
+
+extern uint8_t isSmileRunning;
+extern uint32_t PC;
+					
+
 uint8_t bClusterAvailable = 0xff;
 uint8_t bClusterManuModeAvailable = 0x00;
 
 extern uint8_t bCAN_SendMSGING;
 extern uint8_t bCAN_ReceiveMSGING;		
 extern uint8_t PositiveRes_Flag;
-extern uint8_t PositiveRes_FlagAlex;
+
 extern uint8_t RXDataBuffer[21];
 
 sManuStruc_Type CurManuSelected_Struc = {MainMenu_Session,0,0,MainMenu,MainMenu_Session,0,0,0,MainMenu_Count}; 
@@ -202,24 +203,21 @@ void APP_UCGUI_Init (void)
 
 void CANRXProcesstaskAlex(void *ptmr, void *parg)
 {
-	uint32_t i=0; 
 
-	if(PositiveRes_FlagAlex)
+
+	if(isSmileRunning)
 	{
-		//EMC_NAND_Test();
 
-		while(readIndex<5)
-		{
 
-			EMC_NAND_ReadSinglePage((void*)readBuff,readIndex);
-			readIndex++;
+		DispAlex(PC);
 
-			_DBG(readBuff);
-		}
+
+		//_DBG(readBuff);
+	
 
  
-		DispAlex(RXDataBuffer);
-		PositiveRes_FlagAlex=0;
+//		DispAlex(RXDataBuffer);
+//		isSmileRunning=0;
 
 	}
 }
@@ -523,6 +521,7 @@ void GPIO_IRQHandler(void)////Check if Coder rotated
 static void uctsk_OKButtonProcess (void)
 {
 	uint8_t err;
+	uint16_t index;
 	OSSemPend(ProOKButtonSem, 0, &err);
 	for (;;)
 	{
@@ -547,9 +546,19 @@ static void uctsk_OKButtonProcess (void)
 					}
 					break;
 				case MainMenu_Alex:
-					
+					if(CurManuSelected_Struc.SecMenu_ID==SecAlex_a)
+					{
 					OSTmrStart(CANRXProcess_TimerAlex,&err);
 					AlexRequest(CurManuSelected_Struc.SecMenu_ID);
+					}
+					else if(CurManuSelected_Struc.SecMenu_ID==SecAlex_b)
+					{
+						for(index=0;index<1024;index++)
+						{
+							EMC_NAND_EraseSingleBlock(index*64);
+						}
+						
+					}
 					
 					break;
 				case MainMenu_IOControl:
@@ -955,26 +964,26 @@ void CurMenuUpdate(sManuStruc_Type CurManuStruc, uint8_t PageNum)
 }
 
 
-void DispAlex(uint8_t *InputPoint)
+void DispAlex(uint32_t i)
 {
-	uint8_t Count_Temp;
-	GUI_RECT Rect = {BLOCK_INFOR_ULX+2, BLOCK_INFOR_ULY+2, BLOCK_INFOR_LRX-2, BLOCK_INFOR_LRY-2};
-	GUI_SetBkColor(GUI_BLACK);  
-	GUI_ClearRect(BLOCK_INFOR_ULX, BLOCK_INFOR_ULY,BLOCK_INFOR_LRX,BLOCK_INFOR_LRY); 
-	GUI_SetColor(PRO_BACK_COLOR);
-	GUI_FillRectEx(&Rect);
-	GUI_SetBkColor(PRO_BACK_COLOR);
-	GUI_SetFont(&GUI_Font16B_ASCII);//GUI_FontComic18B_ASCII
-	GUI_SetColor(PRO_FONT_COLOR);
-	GUI_GotoXY(BLOCK_INFOR_X, BLOCK_INFOR_Y);
-	
-	for(Count_Temp = 0; Count_Temp < 5; Count_Temp++)
-	{
-		GUI_DispString("Version: ");
-		GUI_DispString("0x");
-		GUI_DispHex(InputPoint[4+Count_Temp], 2);
-		GUI_GotoXY(BLOCK_INFOR_X, BLOCK_INFOR_Y + Font16B_SIZE* (Count_Temp+1));
-	}
+//	uint8_t Count_Temp;
+//	GUI_RECT Rect = {BLOCK_INFOR_ULX+2, BLOCK_INFOR_ULY+2, BLOCK_INFOR_LRX-2, BLOCK_INFOR_LRY-2};
+//	GUI_SetBkColor(GUI_BLACK);  
+//	GUI_ClearRect(BLOCK_INFOR_ULX, BLOCK_INFOR_ULY,BLOCK_INFOR_LRX,BLOCK_INFOR_LRY); 
+//	GUI_SetColor(PRO_BACK_COLOR);
+//	GUI_FillRectEx(&Rect);
+//	GUI_SetBkColor(PRO_BACK_COLOR);
+//	GUI_SetFont(&GUI_Font16B_ASCII);//GUI_FontComic18B_ASCII
+//	GUI_SetColor(PRO_FONT_COLOR);
+	GUI_GotoXY(270, BLOCK_INFOR_Y);
+	GUI_DispHex(i, 8);
+//	for(Count_Temp = 0; Count_Temp < 5; Count_Temp++)
+//	{
+//		GUI_DispString("Version: ");
+//		GUI_DispString("0x");
+		
+		//GUI_GotoXY(BLOCK_INFOR_X, BLOCK_INFOR_Y + Font16B_SIZE* (Count_Temp+1));
+//	}
 }	
 	
 //==============================================================================

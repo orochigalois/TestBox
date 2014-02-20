@@ -75,7 +75,7 @@ void CurMenuUpdate(sManuStruc_Type CurManuStruc, uint8_t PageNum);
 
 void SubMenu_PerMenuDisp(uint8_t SubSecMenuItem_ID, uint8_t PageNum);
 void DispBlockContext(sManuStruc_Type CurManuStruc, uint8_t *InputPoint);
-void DispAlex(uint8_t *InputPoint);
+void DispAlex(uint32_t);
 
 uint8_t FindCoderRotatedIndex(sManuStruc_Type CurManuStruc);
 uint8_t FindStructrueIndex(sManuStruc_Type CurManuStruc);
